@@ -18,7 +18,8 @@ public class AccuWeatherData {
 
         /* Próba wyszukania i zwrócenia kodu miasta do zmiennej dayForecast.cityKey */
         try {
-            URL url = new URL("http://dataservice.accuweather.com/locations/v1/cities/search?apikey=RuxvrrM8qDkPm0uddr5gAaopFROpthJf&q=" + cityName + "&language=pl&details=false");
+
+            URL url = new URL("http://dataservice.accuweather.com/locations/v1/cities/search?apikey=RuxvrrM8qDkPm0uddr5gAaopFROpthJf&q=" + convertToHTML(cityName) + "&language=pl&details=false");
             URLConnection conn = url.openConnection();
             BufferedReader input = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             JSONArray arr = new JSONArray(input.readLine());
@@ -56,6 +57,7 @@ public class AccuWeatherData {
                 dayForecast.windDirect = array.getJSONObject(0).getJSONObject("Day").getJSONObject("Wind").getJSONObject("Direction").get("Localized").toString();
                 dayForecast.snow = Double.parseDouble(array.getJSONObject(0).getJSONObject("Day").getJSONObject("Snow").get("Value").toString());
                 dayForecast.rain = Double.parseDouble(array.getJSONObject(0).getJSONObject("Day").getJSONObject("Rain").get("Value").toString());
+                dayForecast.saveValues();
 
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
@@ -66,5 +68,31 @@ public class AccuWeatherData {
             System.out.println("Wystąpił błąd przy wyszukiwaniu miasta!");
         }
         return null;
+    }
+
+    private static String convertToHTML(String str){
+        String result = "";
+        for(char c : str.toCharArray()){
+            if(c == 'ł') result += "%C5%82";
+            else if(c == 'Ł') result += "%C5%81";
+            else if(c == 'ą') result += "%C4%85";
+            else if(c == 'Ą') result += "%C4%84";
+            else if(c == 'ę') result += "%C4%99";
+            else if(c == 'Ę') result += "%C4%98";
+            else if(c == 'ć') result += "%C4%87";
+            else if(c == 'Ć') result += "%C4%86";
+            else if(c == 'ó') result += "%C3%94";
+            else if(c == 'Ó') result += "%C3%93";
+            else if(c == 'ń') result += "%C5%84";
+            else if(c == 'Ń') result += "%C5%83";
+            else if(c == 'ś') result += "%C5%9B";
+            else if(c == 'Ś') result += "%C5%9A";
+            else if(c == 'ż') result += "%C5%BC";
+            else if(c == 'Ż') result += "%C5%BB";
+            else if(c == 'ź') result += "%C5%BA";
+            else if(c == 'Ź') result += "%C5%B9";
+            else result += c;
+        }
+        return result;
     }
 }
