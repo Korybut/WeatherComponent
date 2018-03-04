@@ -1,9 +1,6 @@
 package WeatherComponent;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -23,7 +20,7 @@ public class DayForecast {
     public double dayTemp;
     public double feelDayTemp;
     public double feelNightTemp;
-    public int iconNum;
+    public String iconNum;
     public String phrase;
     public double windSpeed;
     public String windDirect;
@@ -36,29 +33,61 @@ public class DayForecast {
 
     public void loadValues(){
         Properties properties = new Properties();
-        try(InputStream stream = Files.newInputStream(Paths.get("forecast.properties"))) {
-            properties.load(stream);
-            cityKey = properties.getProperty("cityKey");
-            cityName = properties.getProperty("cityName");
-            administrativeArea = properties.getProperty("administrativeArea");
-            warning = properties.getProperty("warning");
-            category = properties.getProperty("category");
-            date = properties.getProperty("date");
-            sunRise = properties.getProperty("sunRise");
-            sunSet = properties.getProperty("sunSet");
-            nightTemp = Double.parseDouble(properties.getProperty("nightTemp"));
-            dayTemp = Double.parseDouble(properties.getProperty("dayTemp"));
-            feelDayTemp = Double.parseDouble(properties.getProperty("feelDayTemp"));
-            feelNightTemp = Double.parseDouble(properties.getProperty("feelNightTemp"));
-            iconNum = Integer.parseInt(properties.getProperty("iconNum"));
-            phrase = properties.getProperty("phrase");
-            windSpeed = Double.parseDouble(properties.getProperty("windSpeed"));
-            windDirect = properties.getProperty("windDirect");
-            rain = Double.parseDouble(properties.getProperty("rain"));
-            snow = Double.parseDouble(properties.getProperty("snow"));
+        if(Files.exists(Paths.get("forecast.properties"))) {
+            try (InputStream stream = Files.newInputStream(Paths.get("forecast.properties"))) {
+                properties.load(stream);
+                cityKey = properties.getProperty("cityKey");
+                cityName = properties.getProperty("cityName");
+                administrativeArea = properties.getProperty("administrativeArea");
+                warning = properties.getProperty("warning");
+                category = properties.getProperty("category");
+                date = properties.getProperty("date");
+                sunRise = properties.getProperty("sunRise");
+                sunSet = properties.getProperty("sunSet");
+                nightTemp = Double.parseDouble(properties.getProperty("nightTemp"));
+                dayTemp = Double.parseDouble(properties.getProperty("dayTemp"));
+                feelDayTemp = Double.parseDouble(properties.getProperty("feelDayTemp"));
+                feelNightTemp = Double.parseDouble(properties.getProperty("feelNightTemp"));
+                iconNum = properties.getProperty("iconNum");
+                phrase = properties.getProperty("phrase");
+                windSpeed = Double.parseDouble(properties.getProperty("windSpeed"));
+                windDirect = properties.getProperty("windDirect");
+                rain = Double.parseDouble(properties.getProperty("rain"));
+                snow = Double.parseDouble(properties.getProperty("snow"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        catch (IOException e){
-            e.printStackTrace();
+        else{
+            File file = new File("forecast.properties");
+            try {
+                file.createNewFile();
+                FileOutputStream out = null;
+                out = new FileOutputStream("forecast.properties");
+                properties = new Properties();
+                properties.setProperty("cityKey", "275110");
+                properties.setProperty("cityName", "Bia\\u0142ystok");
+                properties.setProperty("administrativeArea", "Podlaskie");
+                properties.setProperty("warning", "Cienka warstwa do 1 cm \\u015Bnieg wtorek wiecz\\u00F3r");
+                properties.setProperty("category", "snow");
+                properties.setProperty("date", "2018-03-03T07\\:00\\:00+01\\:00");
+                properties.setProperty("sunRise", "2018-03-03T06\\:11\\:00+01\\:00");
+                properties.setProperty("sunSet", "2018-03-03T17\\:09\\:00+01\\:00");
+                properties.setProperty("nightTemp", "-12.1");
+                properties.setProperty("dayTemp", "-7.6");
+                properties.setProperty("feelDayTemp", "-8.9");
+                properties.setProperty("feelNightTemp", "-18.7");
+                properties.setProperty("iconNum", "31");
+                properties.setProperty("phrase","Zimno");
+                properties.setProperty("windSpeed", "13.0");
+                properties.setProperty("windDirect","N");
+                properties.setProperty("rain","0.0");
+                properties.setProperty("snow", "0.0");
+                properties.store(out, null);
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -79,7 +108,7 @@ public class DayForecast {
             properties.setProperty("dayTemp", String.valueOf(dayTemp));
             properties.setProperty("feelDayTemp", String.valueOf(feelDayTemp));
             properties.setProperty("feelNightTemp", String.valueOf(feelNightTemp));
-            properties.setProperty("iconNum", String.valueOf(iconNum));
+            properties.setProperty("iconNum", iconNum);
             properties.setProperty("phrase",phrase);
             properties.setProperty("windSpeed", String.valueOf(windSpeed));
             properties.setProperty("windDirect",windDirect);
@@ -95,10 +124,10 @@ public class DayForecast {
     }
 
     public String getPrecipitationImg(){
-        if(rain==0 & snow==0) return "rain.png";
-        else if(rain!=0 & snow!=0) return "snow_rain.png";
-        else if(rain!=0) return "rain.png";
-        else return "snow.png";
+        if(rain==0 & snow==0) return "/img/rain.png";
+        else if(rain!=0 & snow!=0) return "/img/snow_rain.png";
+        else if(rain!=0) return "/img/rain.png";
+        else return "/img/snow.png";
     }
 
     public String getPrecipitationText(){
@@ -106,6 +135,14 @@ public class DayForecast {
         else if(rain!=0 & snow!=0) return "Opady śniegu z deszczem: " + (rain>snow ? rain : snow) + "mm";
         else if(rain!=0) return "Opady deszczu: " + rain + "mm";
         else return "Opady śniegu: " + snow + "mm";
+    }
+
+    public String getArrowWind(){
+        return "/img/" + windDirect + ".png";
+    }
+
+    public String getDayIcon(){
+        return "/img/" + iconNum + "-s.png";
     }
 
     @Override

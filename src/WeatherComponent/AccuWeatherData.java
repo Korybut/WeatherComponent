@@ -45,7 +45,7 @@ public class AccuWeatherData {
                 JSONArray array = obj.getJSONArray("DailyForecasts");
 
                 dayForecast.date = array.getJSONObject(0).get("Date").toString();
-                dayForecast.iconNum = Integer.parseInt(array.getJSONObject(0).getJSONObject("Day").get("Icon").toString());
+                dayForecast.iconNum = array.getJSONObject(0).getJSONObject("Day").get("Icon").toString();
                 dayForecast.phrase = array.getJSONObject(0).getJSONObject("Day").get("IconPhrase").toString();
                 dayForecast.sunRise = array.getJSONObject(0).getJSONObject("Sun").get("Rise").toString();
                 dayForecast.sunSet = array.getJSONObject(0).getJSONObject("Sun").get("Set").toString();
@@ -91,6 +91,7 @@ public class AccuWeatherData {
             else if(c == 'Ż') result += "%C5%BB";
             else if(c == 'ź') result += "%C5%BA";
             else if(c == 'Ź') result += "%C5%B9";
+            else if(c == ' ') result += "%20";
             else result += c;
         }
         return result;
